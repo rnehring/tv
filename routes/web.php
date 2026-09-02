@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\MonthlyController;
 use App\Http\Controllers\Admin\OtifController;
 use App\Http\Controllers\Admin\SlideController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\SlideshowController;
 use Illuminate\Support\Facades\Route;
@@ -64,4 +65,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/locations', [LocationController::class, 'store'])->name('locations.store');
     Route::put('/locations/{location}', [LocationController::class, 'update'])->name('locations.update');
     Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('locations.destroy');
+
+    // Admin users
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 });

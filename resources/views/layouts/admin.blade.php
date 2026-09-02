@@ -17,6 +17,10 @@
         // ['route' => 'admin.otif.index', 'label' => 'OTIF Backlog', 'icon' => '📦', 'active' => request()->routeIs('admin.otif.*')],
         ['route' => 'admin.locations.index', 'label' => 'Locations', 'icon' => '📍', 'active' => request()->routeIs('admin.locations.*')],
     ];
+    // Only administrators can manage users, so hide the section from everyone else.
+    if (auth()->user()?->is_admin) {
+        $nav[] = ['route' => 'admin.users.index', 'label' => 'Users', 'icon' => '👤', 'active' => request()->routeIs('admin.users.*')];
+    }
 @endphp
 
 <div class="flex h-full">
