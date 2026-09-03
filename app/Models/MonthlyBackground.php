@@ -12,13 +12,14 @@ class MonthlyBackground extends Model
 
     protected $fillable = [
         'month', 'kind', 'image_path', 'heading',
-        'text_color', 'accent_color', 'align',
+        'text_color', 'accent_color', 'align', 'font_size',
     ];
 
     protected function casts(): array
     {
         return [
             'month' => 'integer',
+            'font_size' => 'integer',
         ];
     }
 

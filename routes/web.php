@@ -49,6 +49,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::delete('/monthly/anniversaries/{anniversary}', [MonthlyController::class, 'destroyAnniversary'])->name('monthly.anniversaries.destroy');
 
     Route::put('/monthly/backgrounds/{month}/{kind}', [MonthlyController::class, 'updateBackground'])->name('monthly.backgrounds.update');
+    Route::get('/monthly/preview/{month}/{kind}', [MonthlyController::class, 'previewBackground'])->name('monthly.preview');
 
     // Gas card goal charts
     Route::get('/gas', [GasChartController::class, 'index'])->name('gas.index');

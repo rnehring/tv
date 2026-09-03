@@ -58,10 +58,70 @@
                 @endforeach
             </select>
 
-            <div class="flex items-center gap-3">
+            {{-- Name size: live preview + slider --}}
+            <div class="mt-5 border-t border-gray-100 pt-4 dark:border-gray-700">
+                <label class="mb-2 block text-sm font-medium">Name Size</label>
+                <div class="aspect-video w-full overflow-hidden rounded-lg border border-gray-200 bg-black dark:border-gray-700">
+                    <iframe data-fs-preview="{{ $kind }}"
+                            src="{{ route('admin.monthly.preview', ['month' => $month, 'kind' => $kind]) }}"
+                            class="h-full w-full" title="Name size preview" loading="lazy"></iframe>
+                </div>
+                <div class="mt-3 flex items-center gap-3">
+                    <span class="text-xs text-gray-400">A</span>
+                    <input type="range" name="font_size" min="12" max="80" step="1"
+                           value="{{ $bg->font_size ?? 34 }}" data-fs-slider="{{ $kind }}"
+                           class="flex-1 accent-blue-600">
+                    <span class="text-lg text-gray-400">A</span>
+                    <span data-fs-value="{{ $kind }}" class="w-14 text-right text-sm tabular-nums text-gray-500 dark:text-gray-400"></span>
+                </div>
+                <label class="mt-2 flex items-center gap-2 text-sm">
+                    <input type="checkbox" name="fs_auto" value="1" data-fs-auto="{{ $kind }}"
+                           {{ ($bg->font_size ?? null) ? '' : 'checked' }}
+                           class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    Auto-fit to the panel <span class="text-gray-400">(size the names automatically; ignore the slider)</span>
+                </label>
+            </div>
+
+            <div class="mt-5 flex items-center gap-3">
                 <button type="submit" class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700">Save</button>
                 <a href="{{ route('slideshow', ['preview' => 1]) }}" target="_blank" class="text-sm text-blue-600 hover:underline">Preview Slideshow →</a>
             </div>
         </form>
     @endforeach
 </div>
+
+<script>
+    (function () {
+        document.querySelectorAll('[data-fs-slider]').forEach(function (slider) {
+            var kind = slider.getAttribute('data-fs-slider');
+            var iframe = document.querySelector('[data-fs-preview="' + kind + '"]');
+            var auto = document.querySelector('[data-fs-auto="' + kind + '"]');
+            var valLabel = document.querySelector('[data-fs-value="' + kind + '"]');
+
+            function post(value) {
+                try { iframe.contentWindow.postMessage({ type: 'kiosk-fs', value: value }, '*'); } catch (e) {}
+            }
+            function sync(live) {
+                if (auto.checked) {
+                    slider.disabled = true;
+                    valLabel.textContent = 'Auto';
+                    if (live) post('auto');
+                } else {
+                    slider.disabled = false;
+                    valLabel.textContent = slider.value + 'px';
+                    if (live) post(parseInt(slider.value, 10));
+                }
+            }
+
+            slider.addEventListener('input', function () {
+                if (auto.checked) { auto.checked = false; }
+                sync(true);
+            });
+            auto.addEventListener('change', function () { sync(true); });
+            // Push the current state into the preview once it has loaded.
+            iframe.addEventListener('load', function () { sync(true); });
+            // Initial label state (before the iframe loads).
+            sync(false);
+        });
+    })();
+</script>

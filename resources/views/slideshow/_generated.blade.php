@@ -4,14 +4,15 @@
     $cols = $count <= 8 ? 1 : ($count <= 20 ? 2 : 3);
     $align = $slide['align'] ?? 'center';
     $bg = $slide['background_url'];
+    $fs = $slide['font_size'] ?? null;   // null => auto-fit
 @endphp
 <div class="gen align-{{ $align }}"
-     style="color: {{ $slide['text_color'] }}; @if($bg) background-image:url('{{ $bg }}'); @endif">
+     style="color: {{ $slide['text_color'] }};@if($fs) --fs: {{ $fs }}px;@endif @if($bg) background-image:url('{{ $bg }}');@endif">
     <div class="inner">
         @if (!empty($slide['heading']))
             <div class="title">{{ $slide['heading'] }}</div>
         @endif
-        <div class="panel">
+        <div class="panel"@if($fs) data-fixed-fs="{{ $fs }}" style="--fs: {{ $fs }}px;"@endif>
             <div class="grid" style="column-count: {{ $cols }};">
                 @foreach ($entries as $entry)
                     <div class="entry {{ $entry['today'] ? 'today' : '' }}"

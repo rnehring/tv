@@ -99,6 +99,7 @@ class SlideshowBuilder
             'accent_color' => $bg->accent_color ?? '#c0392b',
             'heading' => $bg->heading ?? null,
             'align' => $bg->align ?? 'center',
+            'font_size' => $bg->font_size ?? null,
             'entries' => $people->map(fn (EmployeeBirthday $p) => [
                 'day' => $p->day,
                 'day_label' => $this->ordinal($p->day),
@@ -129,6 +130,7 @@ class SlideshowBuilder
             'accent_color' => $bg->accent_color ?? '#c0392b',
             'heading' => $bg->heading ?? null,
             'align' => $bg->align ?? 'center',
+            'font_size' => $bg->font_size ?? null,
             'entries' => $people->map(fn (EmployeeAnniversary $p) => [
                 'day' => $p->day,
                 'day_label' => $this->ordinal($p->day),
@@ -136,6 +138,51 @@ class SlideshowBuilder
                 'suffix' => ' ('.$p->years_label.')',
                 'today' => $p->isToday(),
             ])->all(),
+        ];
+    }
+
+    /**
+     * Build a single birthday/anniversary slide for a given month, for the admin
+     * font-size preview. Uses that month's real people; falls back to sample
+     * names when the month is empty so the layout is still visible.
+     */
+    public function previewSlide(int $month, string $kind): array
+    {
+        $isAnniv = $kind === MonthlyBackground::KIND_ANNIVERSARY;
+        $bg = MonthlyBackground::for($month, $kind);
+
+        if ($isAnniv) {
+            $people = EmployeeAnniversary::where('month', $month)->orderBy('day')->orderBy('last_name')->get();
+            $entries = $people->map(fn (EmployeeAnniversary $p) => [
+                'day' => $p->day, 'day_label' => $this->ordinal($p->day),
+                'name' => $p->full_name, 'suffix' => ' ('.$p->years_label.')', 'today' => false,
+            ])->all();
+        } else {
+            $people = EmployeeBirthday::where('month', $month)->orderBy('day')->orderBy('last_name')->get();
+            $entries = $people->map(fn (EmployeeBirthday $p) => [
+                'day' => $p->day, 'day_label' => $this->ordinal($p->day),
+                'name' => $p->full_name, 'suffix' => '', 'today' => false,
+            ])->all();
+        }
+
+        if (empty($entries)) {
+            $samples = ['Alex Johnson', 'Maria Garcia', 'Chris Lee', 'Sam Patel', 'Jordan Smith', 'Taylor Brown',
+                'Jamie Nguyen', 'Casey Davis', 'Riley Martin', 'Morgan Clark', 'Drew Adams', 'Quinn Rivera'];
+            foreach ($samples as $i => $n) {
+                $entries[] = ['day' => $i + 1, 'day_label' => $this->ordinal($i + 1), 'name' => $n,
+                    'suffix' => $isAnniv ? ' (5)' : '', 'today' => false];
+            }
+        }
+
+        return [
+            'type' => $isAnniv ? 'anniversary' : 'birthday',
+            'background_url' => $bg?->image_url,
+            'text_color' => $bg->text_color ?? ($isAnniv ? '#0d3b53' : '#3a2416'),
+            'accent_color' => $bg->accent_color ?? '#c0392b',
+            'heading' => $bg->heading ?? null,
+            'align' => $bg->align ?? 'center',
+            'font_size' => $bg->font_size ?? null,
+            'entries' => $entries,
         ];
     }
 

@@ -7,6 +7,7 @@ use App\Models\EmployeeAnniversary;
 use App\Models\EmployeeBirthday;
 use App\Models\MonthlyBackground;
 use App\Services\AdpCsvImporter;
+use App\Services\SlideshowBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -117,6 +118,8 @@ class MonthlyController extends Controller
             'text_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'accent_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'align' => ['required', 'in:left,center,right'],
+            'font_size' => ['nullable', 'integer', 'min:12', 'max:80'],
+            'fs_auto' => ['nullable', 'boolean'],
         ]);
 
         $bg = MonthlyBackground::firstOrNew(['month' => $month, 'kind' => $kind]);
@@ -124,6 +127,8 @@ class MonthlyController extends Controller
         $bg->text_color = $data['text_color'];
         $bg->accent_color = $data['accent_color'];
         $bg->align = $data['align'];
+        // "Auto-fit" checked (or no size given) => null; otherwise the fixed size.
+        $bg->font_size = $request->boolean('fs_auto') ? null : ($data['font_size'] ?? null);
 
         if ($request->hasFile('image')) {
             if ($bg->image_path) {
@@ -134,6 +139,17 @@ class MonthlyController extends Controller
         $bg->save();
 
         return $this->redirectMonthly('backgrounds', $month)->with('status', ucfirst($kind).' background for '.self::MONTHS[$month].' saved.');
+    }
+
+    /** Renders a single generated slide (for the admin font-size preview iframe). */
+    public function previewBackground(int $month, string $kind, SlideshowBuilder $builder): View
+    {
+        abort_unless(in_array($kind, [MonthlyBackground::KIND_BIRTHDAY, MonthlyBackground::KIND_ANNIVERSARY], true), 404);
+        abort_unless($month >= 1 && $month <= 12, 404);
+
+        return view('slideshow.preview', [
+            'slide' => $builder->previewSlide($month, $kind),
+        ]);
     }
 
     // ---- Helpers ---------------------------------------------------------

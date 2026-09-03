@@ -13,8 +13,7 @@
         ['route' => 'admin.slides.index', 'label' => 'Static Slides', 'icon' => '🖼️', 'active' => request()->routeIs('admin.slides.*')],
         ['route' => 'admin.monthly.index', 'label' => 'Monthly Slides', 'icon' => '🎂', 'active' => request()->routeIs('admin.monthly.*')],
         ['route' => 'admin.gas.index', 'label' => 'Gas Cards', 'icon' => '⛽', 'active' => request()->routeIs('admin.gas.*')],
-        // OTIF Backlog hidden from the nav for now (route still works directly).
-        // ['route' => 'admin.otif.index', 'label' => 'OTIF Backlog', 'icon' => '📦', 'active' => request()->routeIs('admin.otif.*')],
+        ['route' => 'admin.otif.index', 'label' => 'OTIF Backlog', 'icon' => '📦', 'active' => request()->routeIs('admin.otif.*')],
         ['route' => 'admin.locations.index', 'label' => 'Locations', 'icon' => '📍', 'active' => request()->routeIs('admin.locations.*')],
     ];
     // Only administrators can manage users, so hide the section from everyone else.
