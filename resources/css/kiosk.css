@@ -2,12 +2,6 @@
  *  Kiosk slideshow — self-contained, no Tailwind/Flowbite dependency  *
  * ------------------------------------------------------------------ */
 
-@font-face {
-    font-family: 'Namefont';
-    src: url('/fonts/AGaramondPro-Regular.otf') format('opentype');
-    font-display: swap;
-}
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {

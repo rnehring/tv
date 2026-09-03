@@ -12,7 +12,12 @@ use App\Http\Controllers\SlideshowController;
 use Illuminate\Support\Facades\Route;
 
 // -------- Public kiosk slideshow --------
-Route::get('/', [SlideshowController::class, 'index'])->name('slideshow');
+// In production the app is served under a subfolder (e.g. /aitv). The bare
+// document-root URL can't reliably carry a query string through the front
+// rewrite, so the canonical, name-bearing route is /display; bare "/" stays a
+// plain alias for when the app is later served from a domain root.
+Route::get('/display', [SlideshowController::class, 'index'])->name('slideshow');
+Route::get('/', [SlideshowController::class, 'index']);
 
 // -------- Auth --------
 Route::middleware('guest')->group(function () {

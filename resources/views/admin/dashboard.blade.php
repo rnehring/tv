@@ -47,12 +47,12 @@
                 <tbody class="text-gray-100">
                     <tr class="odd:bg-gray-900 even:bg-gray-800/50">
                         <td class="px-4 py-3 font-medium">All / Default</td>
-                        <td class="px-4 py-3"><code class="rounded bg-gray-700/60 px-2 py-1 text-xs text-gray-100">{{ url('/') }}</code></td>
+                        <td class="px-4 py-3"><code class="rounded bg-gray-700/60 px-2 py-1 text-xs text-gray-100">{{ route('slideshow') }}</code></td>
                     </tr>
                     @foreach ($locations as $loc)
                         <tr class="odd:bg-gray-900 even:bg-gray-800/50">
                             <td class="px-4 py-3 font-medium">{{ $loc->name }}</td>
-                            <td class="px-4 py-3"><code class="rounded bg-gray-700/60 px-2 py-1 text-xs text-gray-100">{{ url('/?location='.$loc->slug) }}</code></td>
+                            <td class="px-4 py-3"><code class="rounded bg-gray-700/60 px-2 py-1 text-xs text-gray-100">{{ route('slideshow', ['location' => $loc->slug]) }}</code></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -64,14 +64,14 @@
     @php
         $defaultLoc = $locations->firstWhere('is_default', true) ?? $locations->first();
         $defaultSlug = $defaultLoc?->slug;
-        $defaultSrc = url('/?preview=1'.($defaultSlug ? '&location='.$defaultSlug : ''));
+        $defaultSrc = route('slideshow', array_filter(['preview' => 1, 'location' => $defaultSlug]));
     @endphp
     <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h2 class="text-lg font-semibold">Live Preview</h2>
             <div class="flex flex-wrap gap-2" id="preview-switch">
                 @foreach ($locations as $loc)
-                    <button type="button" data-src="{{ url('/?preview=1&location='.$loc->slug) }}"
+                    <button type="button" data-src="{{ route('slideshow', ['preview' => 1, 'location' => $loc->slug]) }}"
                             class="preview-btn rounded-lg border px-3 py-1.5 text-sm font-medium
                             {{ $loc->id === $defaultLoc?->id
                                 ? 'border-blue-600 bg-blue-600 text-white'
@@ -79,7 +79,7 @@
                         {{ $loc->name }}
                     </button>
                 @endforeach
-                <button type="button" data-src="{{ url('/?preview=1') }}"
+                <button type="button" data-src="{{ route('slideshow', ['preview' => 1]) }}"
                         class="preview-btn rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700">
                     All / Default
                 </button>

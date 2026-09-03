@@ -6,7 +6,14 @@
     <meta name="robots" content="noindex">
     <title>{{ config('app.name') }} — Slideshow{{ $location ? ' · '.$location->name : '' }}</title>
     @vite('resources/js/kiosk.js')
-    <style>:root { --transition: {{ $transitionMs }}ms; }</style>
+    <style>
+        :root { --transition: {{ $transitionMs }}ms; }
+        @font-face {
+            font-family: 'Namefont';
+            src: url('{{ asset('fonts/AGaramondPro-Regular.otf') }}') format('opentype');
+            font-display: swap;
+        }
+    </style>
 </head>
 <body data-reload="{{ $isPreview ? 0 : $reloadSeconds }}" data-speed="{{ $isPreview ? 2 : 1 }}">
 <div id="viewport">

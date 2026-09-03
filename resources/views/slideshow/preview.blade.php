@@ -6,7 +6,15 @@
     <meta name="robots" content="noindex">
     <title>Slide preview</title>
     @vite('resources/js/kiosk.js')
-    <style>:root { --transition: 0ms; } html, body { background: #000; }</style>
+    <style>
+        :root { --transition: 0ms; }
+        html, body { background: #000; }
+        @font-face {
+            font-family: 'Namefont';
+            src: url('{{ asset('fonts/AGaramondPro-Regular.otf') }}') format('opentype');
+            font-display: swap;
+        }
+    </style>
 </head>
 <body data-reload="0" data-speed="1">
 <div id="viewport">
